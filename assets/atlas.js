@@ -268,6 +268,13 @@
     var sentinel = document.createElement('div'); sentinel.style.height = '1px'; bar.parentNode.insertBefore(sentinel, bar);
     new IntersectionObserver(function (es) { bar.classList.toggle('stuck', !es[0].isIntersecting); }).observe(sentinel);
   }
+  // back-to-top button: appears once the reader is well past the start of the list
+  var top = $('#pca-top'), app = $('#pca-app');
+  if (top && app) {
+    var onScroll = function () { top.hidden = app.getBoundingClientRect().top > -window.innerHeight * 1.5; };
+    window.addEventListener('scroll', onScroll, { passive: true }); onScroll();
+    top.addEventListener('click', function () { scrollToEl(app); });
+  }
   pressed(); render();
   var h = (location.hash || '').replace(/^#(pca-)?/, '');
   if (h && /^[a-z0-9]+$/.test(h)) openGame(h);

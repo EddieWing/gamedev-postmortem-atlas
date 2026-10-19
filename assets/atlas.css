@@ -150,6 +150,8 @@
 .pca .btn:hover { border-color: var(--accent) }
 .pca .btn.primary { background: var(--accent); border-color: var(--accent); color: var(--card) }
 .pca .btn.primary:hover { background: var(--accent-hover) }
+.pca .totop { position: fixed; z-index: 6; right: max(20px, env(safe-area-inset-right, 0px)); bottom: max(20px, env(safe-area-inset-bottom, 0px)); width: 48px; height: 48px; display: grid; place-items: center; padding: 0; border-radius: 50%; border: 1px solid var(--line); background: var(--card); color: var(--accent); cursor: pointer; box-shadow: 0 6px 16px -6px rgba(0,0,0,.35) }
+.pca .totop:hover { border-color: var(--accent); color: var(--accent-hover) }
 .pca .report { display: flex; justify-content: flex-end }
 .pca .linkbtn { background: none; border: 0; padding: 6px 0; min-height: 36px; font-size: 13px; color: var(--muted); text-decoration: underline; text-decoration-color: var(--line); text-underline-offset: 3px; cursor: pointer }
 .pca .linkbtn:hover { color: var(--accent) }
@@ -205,5 +207,6 @@
   .pca section.src { grid-template-columns: 1fr; gap: 16px; padding: 16px 18px }
   .pca .crow { flex-direction: column-reverse; gap: 6px }
   .pca .crow .ctr { margin: 0 0 0 -10px; align-self: flex-start }
+  .pca .totop { right: max(14px, env(safe-area-inset-right, 0px)); bottom: max(14px, env(safe-area-inset-bottom, 0px)); width: 44px; height: 44px }
 }
 @media (prefers-reduced-motion: no-preference) { .pca article.game { transition: border-color .15s } .pca article.game:hover { border-color: var(--box-line) } }
