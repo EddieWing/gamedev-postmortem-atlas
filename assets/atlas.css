@@ -1,0 +1,209 @@
+/* Gamedev Postmortem Atlas. Every rule is scoped to .pca, so the block can sit inside another page.
+   Layout: one 1200px column; intro with a legend; sticky filters; game cards with a horizontal capsule left and the decision list beside it.
+   Embedding: set --pca-sticky-top on .pca if the host page has its own sticky header. */
+.pca {
+  --bg: #F3F2EC; --card: #FFFFFF; --line: #DDDBD0; --line-soft: #E7E5DC; --box-line: #E2E0D6;
+  --cover: #E6E4DA; --cover-fg: #5C645E; --badge-bg: rgba(18, 22, 20, .78); --badge-fg: #F3F2EC;
+  --fg: #1D2520; --fg2: #3A433D; --fg3: #2A322D; --muted: #5C645E;
+  --accent: #2D5B3F; --accent-hover: #1D3D29; --accent-soft: #DCE8DF;
+  --read-bg: #EDF2EC; --read-line: #D3DED4; --read-label: #4F5A52; --source-bg: #F5F4EF;
+  --bad-fg: #A3341F; --bad-bg: #FBE8E2; --good-fg: #2D6A43; --good-bg: #E3F1E7; --mix-fg: #8A5A00; --mix-bg: #FBF0D9;
+  --chip-bg: #ECEBE4; --chip-fg: #4F5A52;
+  --font-display: 'Source Serif 4', Georgia, 'Times New Roman', serif;
+  --font-body: 'IBM Plex Sans', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --pca-sticky-top: 0px;
+  color-scheme: light;
+  background: var(--bg); color: var(--fg); font-family: var(--font-body); font-size: 15px; line-height: 1.5;
+}
+@media (prefers-color-scheme: dark) { .pca:not([data-theme="light"]) {
+  --bg: #121614; --card: #1A201C; --line: #2E3631; --line-soft: #29302B; --box-line: #2E3631;
+  --cover: #252C27; --cover-fg: #9AA59D; --badge-bg: rgba(8, 10, 9, .8); --badge-fg: #E7ECE8;
+  --fg: #E7ECE8; --fg2: #C6CFC8; --fg3: #D3DAD5; --muted: #9AA59D;
+  --accent: #8CC5A0; --accent-hover: #B3DCC1; --accent-soft: #22352A;
+  --read-bg: #1B2720; --read-line: #2F4136; --read-label: #A9B8AD; --source-bg: #171C19;
+  --bad-fg: #F2A08C; --bad-bg: #3A1D16; --good-fg: #8FD3A6; --good-bg: #173323; --mix-fg: #E8C170; --mix-bg: #3A2C10;
+  --chip-bg: #29302B; --chip-fg: #B8C2BA;
+  color-scheme: dark } }
+.pca[data-theme="dark"] {
+  --bg: #121614; --card: #1A201C; --line: #2E3631; --line-soft: #29302B; --box-line: #2E3631;
+  --cover: #252C27; --cover-fg: #9AA59D; --badge-bg: rgba(8, 10, 9, .8); --badge-fg: #E7ECE8;
+  --fg: #E7ECE8; --fg2: #C6CFC8; --fg3: #D3DAD5; --muted: #9AA59D;
+  --accent: #8CC5A0; --accent-hover: #B3DCC1; --accent-soft: #22352A;
+  --read-bg: #1B2720; --read-line: #2F4136; --read-label: #A9B8AD; --source-bg: #171C19;
+  --bad-fg: #F2A08C; --bad-bg: #3A1D16; --good-fg: #8FD3A6; --good-bg: #173323; --mix-fg: #E8C170; --mix-bg: #3A2C10;
+  --chip-bg: #29302B; --chip-fg: #B8C2BA;
+  color-scheme: dark }
+
+.pca *, .pca *::before, .pca *::after { box-sizing: border-box }
+.pca a { color: var(--accent) } .pca a:hover { color: var(--accent-hover) }
+.pca button, .pca input, .pca select { font: inherit; color: inherit }
+.pca :focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; border-radius: 6px }
+.pca [hidden] { display: none !important }
+.pca .wrap { max-width: 1200px; margin: 0 auto; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
+
+.pca header.top { padding-block: 48px 4px }
+.pca h1 { margin: 0; font-family: var(--font-display); font-weight: 600; font-size: clamp(32px, 5.4vw, 46px); line-height: 1.08; letter-spacing: -0.015em; text-wrap: balance; color: var(--fg) }
+.pca .intro { display: grid; grid-template-columns: minmax(0, 1fr) 300px; gap: 40px; align-items: start; margin-top: 14px }
+.pca .lede { margin: 0; font-size: 16.5px; line-height: 1.6; color: var(--fg2); text-wrap: pretty }
+.pca .legend { background: var(--card); border: 1px solid var(--line); border-radius: 12px; padding: 16px 18px; display: flex; flex-direction: column; gap: 12px }
+.pca .legend .lh { font-size: 12px; font-weight: 600; letter-spacing: .04em; text-transform: uppercase; color: var(--muted) }
+.pca .legend .li { display: grid; grid-template-columns: 96px minmax(0, 1fr); gap: 10px; align-items: start; font-size: 14px; line-height: 1.45; color: var(--fg2) }
+.pca .legend .pill { justify-self: start }
+.pca .stats { margin: 14px 0 0; font-size: 13.5px; color: var(--muted); font-variant-numeric: tabular-nums }
+
+.pca main { padding-block: 28px 64px }
+.pca .controls { position: sticky; top: calc(var(--pca-sticky-top) + env(safe-area-inset-top, 0px)); z-index: 5; background: var(--bg); display: flex; flex-direction: column; gap: 10px; margin-bottom: 18px; padding-block: 14px 12px; border-top: 1px solid var(--line); border-bottom: 1px solid transparent; transition: border-color .15s, box-shadow .15s }
+.pca .controls.stuck { border-bottom-color: var(--line); box-shadow: 0 6px 12px -10px rgba(0,0,0,.35) }
+.pca .row.searchrow { flex-wrap: nowrap; align-items: flex-end }
+.pca .lucky { display: inline-flex; align-items: center; gap: 8px; white-space: nowrap; min-height: 40px; padding: 8px 14px }
+.pca .row { display: flex; flex-wrap: wrap; gap: 10px; align-items: center }
+.pca .row.filters { align-items: flex-end; flex-wrap: wrap; position: relative }
+.pca .row.filters .field { position: relative }
+.pca .row.filters .tail { margin-left: auto; display: flex; align-items: center; gap: 12px; min-height: 40px }
+.pca .row.mrow { display: none }
+.pca .row.filters select { max-width: 180px }
+.pca .row.filters .seg button { padding: 5px 11px; min-height: 34px }
+.pca .seg { display: inline-flex; flex-wrap: wrap; background: var(--chip-bg); border-radius: 10px; padding: 3px }
+.pca .seg button { border: 0; background: none; padding: 7px 14px; border-radius: 8px; font-size: 14px; font-weight: 500; color: var(--chip-fg); cursor: pointer; min-height: 38px }
+.pca .seg button[aria-pressed="true"] { background: var(--card); color: var(--fg); box-shadow: 0 1px 2px rgba(0,0,0,.08) }
+.pca .field { display: flex; flex-direction: column; gap: 4px; min-width: 0 }
+.pca .field label, .pca .field .flabel { font-size: 12px; font-weight: 600; color: var(--muted) }
+.pca input[type="search"], .pca select { background: var(--card); border: 1px solid var(--line); border-radius: 8px; padding: 8px 10px; min-height: 40px; min-width: 0; max-width: 100% }
+.pca input[type="search"] { width: 100%; }
+.pca .grow { flex: 1 1 240px }
+.pca .chk { display: inline-flex; align-items: center; gap: 8px; font-size: 14px; color: var(--fg2); min-height: 40px; cursor: pointer }
+.pca .chk input { width: 16px; height: 16px; accent-color: var(--accent) }
+.pca .count { font-size: 13px; color: var(--muted); font-variant-numeric: tabular-nums }
+.pca .reset { background: none; border: 0; color: var(--accent); text-decoration: underline; cursor: pointer; font-size: 13px; padding: 0; min-height: 40px }
+
+.pca .list { display: flex; flex-direction: column; gap: 16px }
+.pca article.game, .pca .case { scroll-margin-top: calc(var(--pca-sticky-top) + var(--pca-bar-h, 150px) + 12px) }
+.pca article.game { position: relative; background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: 24px; display: flex; flex-direction: column; gap: 20px }
+.pca .head { display: grid; grid-template-columns: 230px minmax(0, 1fr); grid-template-areas: 'cover title' 'cover list'; grid-template-rows: auto 1fr; column-gap: 22px; align-items: start }
+.pca .head > .cvw { grid-area: cover; display: flex; flex-direction: column; gap: 8px; min-width: 0 }
+.pca .cvw .scale { font-size: 12px; font-weight: 600; letter-spacing: .04em; text-transform: uppercase; color: var(--muted) }
+.pca .head > .htitle { grid-area: title; min-width: 0 }
+.pca .head > .dlist { grid-area: list; min-width: 0 }
+.pca article.game:not(.open), .pca article.game .head, .pca .crow { cursor: pointer }
+.pca article.game:not(.open):hover { border-color: var(--accent-soft) }
+.pca .crow:hover .dt, .pca article.game:not(.open):hover .dtl { color: var(--accent) }
+.pca .cover { position: relative; width: 230px; aspect-ratio: 460 / 215; max-width: 100%; flex: none; border-radius: 8px; background: var(--cover); color: var(--cover-fg); display: flex; flex-direction: column; justify-content: space-between; padding: 10px; text-decoration: none; overflow: hidden }
+.pca .cover.img { box-shadow: 0 1px 3px rgba(0,0,0,.18) }
+.pca .cover img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; display: block }
+.pca .cover .ini { font-family: var(--font-display); font-weight: 600; font-size: 30px; line-height: 1; letter-spacing: -0.02em }
+.pca .cover.img .ini { display: none }
+.pca .cover .badge { position: relative; align-self: flex-end; margin-top: auto; display: inline-flex; align-items: center; gap: 4px; padding: 3px 7px; border-radius: 6px; font-size: 11px; font-weight: 600; letter-spacing: .02em; background: var(--badge-bg); color: var(--badge-fg) }
+.pca a.cover:hover .badge { background: var(--accent); color: var(--card) }
+.pca .htitle h2 { margin: 0; padding-right: 48px; font-family: var(--font-display); font-weight: 600; font-size: 22px; line-height: 1.22; letter-spacing: -0.01em; text-wrap: balance; color: var(--fg) }
+.pca .htitle h2 .yr { font-weight: 400; color: var(--muted) }
+.pca .meta { margin-top: 4px; font-size: 13px; color: var(--muted) }
+.pca .dt { margin: 12px 0 0; font-size: 16px; line-height: 1.45; font-weight: 600; color: var(--fg) }
+.pca .sd { margin: 4px 0 0; font-size: 15.5px; line-height: 1.5; color: var(--fg2) }
+.pca .tr { position: absolute; top: 14px; right: 14px; display: flex; align-items: center; gap: 4px }
+.pca .pill { display: inline-flex; align-items: center; gap: 6px; padding: 4px 10px; border-radius: 999px; font-size: 12px; font-weight: 600; white-space: nowrap }
+.pca .pill.b { background: var(--bad-bg); color: var(--bad-fg) } .pca .pill.p { background: var(--good-bg); color: var(--good-fg) } .pca .pill.t { background: var(--mix-bg); color: var(--mix-fg) }
+.pca .pill.n { background: var(--chip-bg); color: var(--chip-fg) }
+.pca .xp { width: 44px; height: 44px; display: inline-flex; align-items: center; justify-content: center; border-radius: 8px; color: var(--accent); background: none; border: 0; cursor: pointer; flex: none }
+.pca .xp:hover { background: var(--accent-soft) }
+.pca .oi { flex: none; width: 22px; height: 22px; border-radius: 999px; display: inline-flex; align-items: center; justify-content: center }
+.pca .oi.b { background: var(--bad-bg); color: var(--bad-fg) } .pca .oi.p { background: var(--good-bg); color: var(--good-fg) } .pca .oi.t { background: var(--mix-bg); color: var(--mix-fg) }
+.pca ul.dlist { list-style: none; margin: 12px 0 0; padding: 0; display: flex; flex-direction: column; gap: 9px }
+.pca ul.dlist li { cursor: pointer; display: flex; gap: 12px; align-items: flex-start; font-size: 15px; font-weight: 600; line-height: 1.4 }
+.pca ul.dlist .pill { flex: none; min-width: 96px; margin-top: -1px }
+.pca ul.dlist .dtl { min-width: 0; padding-top: 1px; transition: color .15s }
+.pca .sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap }
+.pca .hr { border-top: 1px solid var(--line-soft) }
+
+.pca .case { display: flex; flex-direction: column; gap: 18px }
+.pca .crow { display: flex; align-items: flex-start; gap: 16px }
+.pca .crow .cbody { flex: 1; min-width: 0 }
+.pca .crow .cat { font-size: 13px; color: var(--muted) }
+.pca .crow .dt { margin-top: 4px }
+.pca .crow .ctr { flex: none; display: flex; align-items: center; gap: 4px; margin: -10px -10px 0 0 }
+
+.pca .lbl { font-size: 13px; font-weight: 600; color: var(--muted) }
+.pca .wh p { margin: 6px 0 0; font-size: 16px; line-height: 1.6; color: var(--fg3); max-width: 70ch }
+.pca .three { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px }
+.pca .three > div { border: 1px solid var(--box-line); border-radius: 10px; padding: 14px 16px; display: flex; flex-direction: column; gap: 6px; min-width: 0 }
+.pca .three .v { font-size: 15px; line-height: 1.5; color: var(--fg) }
+.pca .three .nf { font-size: 13px; color: var(--muted) }
+.pca section.read { background: var(--read-bg); border-radius: 12px; padding: 22px; display: flex; flex-direction: column; gap: 16px }
+.pca section.read .h { font-size: 15px; font-weight: 600; color: var(--accent) }
+.pca section.read .k { font-size: 12px; font-weight: 600; color: var(--read-label) }
+.pca section.read .lesson { margin: 0; font-size: 19px; font-weight: 600; line-height: 1.35; color: var(--fg); text-wrap: pretty }
+.pca section.read .interp { margin: 0; font-size: 15px; line-height: 1.55; color: var(--fg3) }
+.pca section.read .ask { padding-top: 14px; border-top: 1px solid var(--read-line) }
+.pca section.read .ask .q { display: flex; gap: 10px; align-items: flex-start; font-size: 16px; line-height: 1.45 }
+.pca section.read .ask svg { margin-top: 4px; flex: none }
+.pca section.src { background: var(--source-bg); border-radius: 12px; padding: 18px 22px; display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.5fr); gap: 28px }
+.pca section.src.solo { grid-template-columns: minmax(0, 1fr) }
+.pca section.src > div { display: flex; flex-direction: column; gap: 6px; min-width: 0 }
+.pca section.src .k { font-size: 12px; font-weight: 600; color: var(--muted) }
+.pca section.src a { font-size: 14px; line-height: 1.45; overflow-wrap: anywhere }
+.pca section.src .sm { font-size: 13px; line-height: 1.45; color: var(--muted) }
+.pca section.src a.sm { color: var(--muted); text-decoration: underline; text-decoration-color: var(--line); text-underline-offset: 2px }
+.pca section.src a.sm:hover { color: var(--accent) }
+.pca blockquote { margin: 0; font-family: var(--font-display); font-style: italic; font-size: 18px; line-height: 1.45; color: var(--fg); overflow-wrap: anywhere }
+.pca .empty { padding: 40px 0; text-align: center; color: var(--muted) }
+.pca .more { display: flex; justify-content: center; margin-top: 20px }
+.pca .btn { background: var(--card); border: 1px solid var(--line); border-radius: 8px; padding: 10px 16px; cursor: pointer; font-weight: 500; min-height: 44px; color: var(--fg) }
+.pca .btn:hover { border-color: var(--accent) }
+.pca .btn.primary { background: var(--accent); border-color: var(--accent); color: var(--card) }
+.pca .btn.primary:hover { background: var(--accent-hover) }
+.pca .report { display: flex; justify-content: flex-end }
+.pca .linkbtn { background: none; border: 0; padding: 6px 0; min-height: 36px; font-size: 13px; color: var(--muted); text-decoration: underline; text-decoration-color: var(--line); text-underline-offset: 3px; cursor: pointer }
+.pca .linkbtn:hover { color: var(--accent) }
+.pca dialog.dlg { width: min(560px, calc(100vw - 32px)); max-height: calc(100vh - 48px); overflow: auto; border: 1px solid var(--line); border-radius: 14px; padding: 0; background: var(--card); color: var(--fg); box-shadow: 0 20px 50px rgba(0,0,0,.3) }
+.pca dialog.dlg::backdrop { background: rgba(10, 12, 11, .55) }
+.pca .dlg form { display: flex; flex-direction: column; gap: 14px; padding: 22px }
+.pca .dlg h3 { margin: 0; font-family: var(--font-display); font-size: 22px; font-weight: 600 }
+.pca .dlg p { margin: 0; font-size: 14.5px; line-height: 1.55; color: var(--fg2) }
+.pca .dlg .about { font-size: 14px; font-weight: 600; color: var(--fg); background: var(--source-bg); border-radius: 8px; padding: 10px 12px }
+.pca .dlg label { display: flex; flex-direction: column; gap: 4px; font-size: 12px; font-weight: 600; color: var(--muted) }
+.pca .dlg textarea, .pca .dlg input { font: inherit; font-size: 15px; color: var(--fg); background: var(--bg); border: 1px solid var(--line); border-radius: 8px; padding: 9px 10px; min-height: 40px; width: 100% }
+.pca .dlg textarea { min-height: 120px; resize: vertical }
+.pca .dlg .acts { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 10px }
+.pca .dlg .note { font-size: 13px; color: var(--muted) }
+.pca footer.end { padding-block: 0 48px; font-size: 13px; color: var(--muted) }
+.pca footer.end p { margin: 0; max-width: 70ch }
+.pca .noscript-index h2 { font-family: var(--font-display); font-size: 20px; margin: 24px 0 6px }
+.pca .noscript-index ul { margin: 0; padding-left: 20px }
+
+@media (max-width: 900px) {
+  .pca .intro { grid-template-columns: minmax(0, 1fr); gap: 18px }
+  .pca .head { grid-template-columns: 160px minmax(0, 1fr) }
+  .pca .cover { width: 160px }
+}
+@media (max-width: 640px) {
+  .pca header.top { padding-block: 32px 0 }
+  .pca .legend .li { grid-template-columns: 88px minmax(0, 1fr); font-size: 13.5px }
+  .pca .controls { gap: 8px; padding-block: 10px }
+  .pca .field > label, .pca .field > .flabel { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap }
+  .pca .row.filters { flex-wrap: nowrap; overflow-x: auto; scrollbar-width: none; padding-bottom: 2px; margin-inline: -16px; padding-inline: 16px }
+  .pca .row.filters::-webkit-scrollbar { display: none }
+  .pca .row.filters .field { flex: none }
+  .pca .row.filters .tail { display: none }
+  .pca .row.mrow { display: flex; gap: 12px }
+  .pca .row.mrow .reset { min-height: 28px }
+  .pca .lucky .lt { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap }
+  .pca .lucky { padding: 8px 11px }
+  .pca ul.dlist .pill { min-width: 0; padding: 4px 5px; margin-top: 0 }
+  .pca ul.dlist .pill .pl { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap }
+  .pca ul.dlist li { gap: 8px; font-size: 14.5px }
+  .pca article.game { padding: 16px; gap: 16px }
+  .pca .tr { top: 8px; right: 8px }
+  .pca .head { grid-template-columns: 104px minmax(0, 1fr); grid-template-areas: 'cover title' 'cover list'; column-gap: 12px }
+  .pca ul.dlist { margin-top: 10px; gap: 8px }
+  .pca .cover { width: 104px; padding: 4px }
+  .pca .cover .ini { font-size: 22px }
+  .pca .cover .badge { font-size: 9.5px; padding: 1px 4px; gap: 2px }
+  .pca .cvw .scale { font-size: 11px }
+  .pca .htitle h2 { padding-right: 36px; font-size: 18px }
+  .pca .dt { margin-top: 8px }
+  .pca .three { grid-template-columns: 1fr }
+  .pca section.read { padding: 18px }
+  .pca section.src { grid-template-columns: 1fr; gap: 16px; padding: 16px 18px }
+  .pca .crow { flex-direction: column-reverse; gap: 6px }
+  .pca .crow .ctr { margin: 0 0 0 -10px; align-self: flex-start }
+}
+@media (prefers-reduced-motion: no-preference) { .pca article.game { transition: border-color .15s } .pca article.game:hover { border-color: var(--box-line) } }
